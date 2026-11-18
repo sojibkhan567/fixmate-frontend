@@ -17,16 +17,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { authClient } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
 
 export function DropdownMenuAvatar() {
+  const router = useRouter()
+  const { data: session, isPending } = authClient.useSession()
+  if (isPending) {
+    return "loading....."
+  }
+
+  const handleLogout = async () => {
+    const { data } = await authClient.signOut()
+    //console.log(data?.success)
+    if (data?.success) {
+      router.push("/")
+    }
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
           <Button variant="ghost" size="icon" className="rounded-full">
             <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="shadcn" />
-              <AvatarFallback>LR</AvatarFallback>
+              <AvatarImage src={session?.user.image || ""} alt="shadcn" />
+              <AvatarFallback>{session?.user.name.charAt(0)}</AvatarFallback>
             </Avatar>
           </Button>
         }
@@ -34,8 +49,8 @@ export function DropdownMenuAvatar() {
       <DropdownMenuContent align="end" className="w-55">
         <DropdownMenuGroup>
           <div className="px-3 py-2">
-            <h1 className="mb-1 font-bold">Md. Sajeeb Khan</h1>
-            <p className="text-xs text-gray-500">sajeeb@gmail.com</p>
+            <h1 className="mb-1 font-bold">{session?.user.name}</h1>
+            <p className="text-xs text-gray-500">{session?.user.email}</p>
           </div>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
@@ -52,7 +67,7 @@ export function DropdownMenuAvatar() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>
           <LogOutIcon />
           Sign Out
         </DropdownMenuItem>

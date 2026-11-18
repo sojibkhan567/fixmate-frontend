@@ -5,6 +5,7 @@ import DashboardHeader from "./Header"
 
 const DashboardShell = ({ children }: { children: React.ReactNode }) => {
   const [open, setOpen] = useState(false)
+
   return (
     <div className="flex h-screen overflow-hidden bg-muted/20">
       <Sidebar open={open} setOpen={setOpen} />

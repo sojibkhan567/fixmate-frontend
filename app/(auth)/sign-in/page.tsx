@@ -1,13 +1,5 @@
+import LoginForm from "@/components/auth/login-form"
 import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
-import React from "react"
-import { Button } from "@/components/ui/button"
 
 const SignInPage = () => {
   return (
@@ -20,40 +12,7 @@ const SignInPage = () => {
               Sign in to your dashboard account
             </p>
           </div>
-          <form>
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="fieldgroup-email">Email</FieldLabel>
-                <Input
-                  id="fieldgroup-email"
-                  type="email"
-                  placeholder="Enter your email"
-                />
-                <FieldDescription>
-                  We&apos;ll send updates to this address.
-                </FieldDescription>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="fieldgroup-password">Password</FieldLabel>
-                <Input
-                  id="fieldgroup-password"
-                  type="password"
-                  placeholder="Enter your password"
-                />
-                <FieldDescription>
-                  We&apos;ll send updates to this address.
-                </FieldDescription>
-              </Field>
-              <Field orientation="horizontal">
-                <Button
-                  type="submit"
-                  className="w-full bg-green-600 hover:bg-green-700"
-                >
-                  Submit
-                </Button>
-              </Field>
-            </FieldGroup>
-          </form>
+          <LoginForm />
         </Card>
       </div>
     </div>
