@@ -44,7 +44,7 @@ const RegisterForm = () => {
         email: payload.email,
         password: payload.password,
         image: payload.image,
-        role: "admin",
+        role: "technician",
       })
 
       if (authError) {

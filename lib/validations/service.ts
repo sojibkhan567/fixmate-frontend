@@ -51,6 +51,7 @@ export type ServiceFormValues = z.infer<typeof serviceFormSchema>
 export const servicePayloadSchema = serviceFormSchema.extend({
   technicianName: z.string().trim().min(1),
   technicianEmail: z.string().email(),
+  approvalStatus: z.enum(["pending", "approved", "rejected"]),
 })
 
 export type ServicePayload = z.infer<typeof servicePayloadSchema>

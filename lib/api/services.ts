@@ -1,9 +1,9 @@
 import type { ServicePayload } from "@/lib/validations/service"
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "" // "" = Next.js route handler
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000" // "" = Next.js route handler
 
 export async function createService(payload: ServicePayload) {
-  const res = await fetch(`${BASE_URL}/api/services`, {
+  const res = await fetch(`${BASE_URL}/services`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),

@@ -4,7 +4,6 @@ import { useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ImagePlus, Loader2, X } from "lucide-react"
-import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -42,6 +41,8 @@ import {
   serviceFormSchema,
   type ServiceFormValues,
 } from "@/lib/validations/service"
+import { toast } from "react-toastify"
+import { useRouter } from "next/navigation"
 
 interface Props {
   /** Logged-in technician. Copied into the service, not editable. */
@@ -53,6 +54,8 @@ const MAX_IMAGE_SIZE = 5 * 1024 * 1024
 export function AddServiceForm({ technician }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
+
+  const router = useRouter()
 
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceFormSchema),
@@ -93,12 +96,14 @@ export function AddServiceForm({ technician }: Props) {
     try {
       await createService({
         ...values,
+        approvalStatus: "pending",
         technicianName: technician.name,
         technicianEmail: technician.email,
       })
 
       toast.success("Service submitted for approval")
-      form.reset()
+      router.push("/dashboard/technician/my-services")
+      router.refresh()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong")
     }
