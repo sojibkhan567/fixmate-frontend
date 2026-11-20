@@ -72,7 +72,7 @@ const STATUS_STYLES: Record<
   },
 }
 
-const usd = new Intl.NumberFormat("en-US", {
+export const usd = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 })
