@@ -3,7 +3,6 @@ import { buttonVariants } from "@/components/ui/button"
 import { MyServicesTable } from "@/components/services/my-services-table"
 
 import { API_BASE_URL } from "@/lib/api/config"
-import { getTokenFromClient } from "@/lib/getTokenFromClient"
 import { getTokenFromServer } from "@/lib/getTokenFromServer"
 import { toast } from "react-toastify"
 

@@ -27,17 +27,29 @@ import {
 } from "@/components/ui/table"
 import { toast } from "react-toastify"
 import { getTokenFromClient } from "@/lib/getTokenFromClient"
+import EditServiceModal from "./edit-service-modal"
 
 type ApprovalStatus = "pending" | "approved" | "rejected"
 
-type Service = {
+export type Service = {
   _id: string
   title: string
-  category: string
+  category:
+    | "Smartphone"
+    | "Laptop & PC"
+    | "AC"
+    | "Refrigerator"
+    | "TV"
+    | "Washing Machine"
+    | "Electrical"
+  description: string
   image: string
   basePrice: number
+  estimatedDuration: string
+  serviceArea: string
   approvalStatus: ApprovalStatus
   isAvailable: boolean
+  serviceMode: "Home Visit" | "Shop Drop-off"
 }
 
 const STATUS_STYLES: Record<
@@ -73,6 +85,7 @@ export function MyServicesTable({
   const [services, setServices] = useState<Service[]>(initialServices)
   const [deleting, setDeleting] = useState<Service | null>(null)
   const [updatingId, setUpdatingId] = useState<string | null>(null)
+  const [editing, setEditing] = useState<Service | null>(null)
 
   async function toggleAvailability(id: string, next: boolean) {
     try {
@@ -236,7 +249,7 @@ export function MyServicesTable({
                         type="button"
                         variant="ghost"
                         size="icon"
-                        onClick={() => toast.info("Edit modal opens here")}
+                        onClick={() => setEditing(service)}
                         aria-label={`Edit ${service.title}`}
                       >
                         <Pencil className="h-4 w-4" />
@@ -258,6 +271,25 @@ export function MyServicesTable({
           </TableBody>
         </Table>
       </div>
+
+      <EditServiceModal
+        service={editing}
+        open={!!editing}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditing(null)
+          }
+        }}
+        onUpdated={(updatedService) => {
+          setServices((prev) =>
+            prev.map((service) =>
+              service._id === updatedService._id ? updatedService : service
+            )
+          )
+
+          setEditing(null)
+        }}
+      />
 
       <AlertDialog
         open={!!deleting}
