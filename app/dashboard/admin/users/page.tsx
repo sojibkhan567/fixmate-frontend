@@ -1,3 +1,4 @@
+import { UsersTable } from "@/components/admin/all-users-table"
 import { getAllUsers } from "@/lib/api/users"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
@@ -10,9 +11,7 @@ const AdminUsersPage = async () => {
   if (!session) {
     redirect("/signin")
   }
-  // console.log(session.session?.token, "session");
 
-  // Only admins may see this page. Other roles go to their own dashboard.
   const role = session.user.role ?? "user"
   if (role !== "admin") {
     redirect(`/dashboard/${role}`)
@@ -21,8 +20,9 @@ const AdminUsersPage = async () => {
   const users = await getAllUsers()
 
   console.log(users, "users")
+  const currentUserId = session.user.id
 
-  return <div>Admin users page</div>
+  return <UsersTable users={users} currentUserId={currentUserId} />
 }
 
 export default AdminUsersPage

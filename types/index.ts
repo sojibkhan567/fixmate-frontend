@@ -1,10 +1,10 @@
-export type TUserRole = "admin" | "technician" | "customer"
+export type Role = "customer" | "technician" | "admin"
 
-// A user as returned by the Express API (GET /users), for the admin page.
-export type TAdminUser = {
-  _id: string
+export type User = {
+  id: string
   name: string
   email: string
-  role: TUserRole
   image?: string | null
+  role: Role
+  createdAt: string
 }
