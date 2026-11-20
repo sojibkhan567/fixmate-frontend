@@ -13,7 +13,7 @@ export default async function MyServicesPage() {
   try {
     const token = await getTokenFromServer()
 
-    const res = await fetch(`${API_BASE_URL}/services`, {
+    const res = await fetch(`${API_BASE_URL}/services/technician`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
