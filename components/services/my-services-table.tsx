@@ -26,6 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { toast } from "react-toastify"
+import { getTokenFromClient } from "@/lib/getTokenFromClient"
 
 type ApprovalStatus = "pending" | "approved" | "rejected"
 
@@ -64,13 +65,100 @@ const usd = new Intl.NumberFormat("en-US", {
   currency: "USD",
 })
 
-export function MyServicesTable({ services }: { services: Service[] }) {
+export function MyServicesTable({
+  services: initialServices,
+}: {
+  services: Service[]
+}) {
+  const [services, setServices] = useState<Service[]>(initialServices)
   const [deleting, setDeleting] = useState<Service | null>(null)
+  const [updatingId, setUpdatingId] = useState<string | null>(null)
 
-  function toggleAvailability(id: string, next: boolean) {}
+  async function toggleAvailability(id: string, next: boolean) {
+    try {
+      const token = await getTokenFromClient()
 
-  function confirmDelete() {
+      setUpdatingId(id)
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/services/${id}/availability`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            isAvailable: next,
+          }),
+        }
+      )
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to update availability")
+      }
+
+      // Update UI only after API successfully updates MongoDB
+      setServices((prev) =>
+        prev.map((service) =>
+          service._id === id
+            ? {
+                ...service,
+                isAvailable: next,
+              }
+            : service
+        )
+      )
+
+      toast.success(
+        next ? "Service is now available" : "Service is now unavailable"
+      )
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update availability"
+      )
+    } finally {
+      setUpdatingId(null)
+    }
+  }
+
+  async function confirmDelete() {
     if (!deleting) return
+
+    try {
+      const token = await getTokenFromClient()
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/services/${deleting._id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to delete service")
+      }
+
+      // Remove deleted service from table
+      setServices((prev) =>
+        prev.filter((service) => service._id !== deleting._id)
+      )
+
+      toast.success(data.message || "Service deleted successfully")
+
+      setDeleting(null)
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete service"
+      )
+    }
   }
 
   if (services.length === 0) {
@@ -135,6 +223,7 @@ export function MyServicesTable({ services }: { services: Service[] }) {
                   <TableCell>
                     <Switch
                       checked={service.isAvailable}
+                      disabled={updatingId === service._id}
                       onCheckedChange={(next) =>
                         toggleAvailability(service._id, next)
                       }
