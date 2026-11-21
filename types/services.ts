@@ -34,6 +34,7 @@ export interface Technician {
 }
 
 export interface Service {
+  _id?: string
   id: string
   title: string
   category: ServiceCategory

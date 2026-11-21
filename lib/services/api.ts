@@ -60,3 +60,28 @@ export async function createBooking(payload: BookingPayload) {
   const data = await res.json().catch(() => ({}))
   return { ok: res.ok, status: res.status, data }
 }
+
+/**
+ * GET /bookings/active?serviceId=...  (cookie/JWT auth)
+ * Expected response: { active: boolean } — true when the logged-in customer has
+ * a requested / accepted / inprogress booking for this service.
+ */
+export async function hasActiveBooking(serviceId: string): Promise<boolean> {
+  try {
+    const token = await getTokenFromClient()
+    const res = await fetch(
+      `${API_URL}/bookings/active?serviceId=${encodeURIComponent(serviceId)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        cache: "no-store",
+      }
+    )
+    if (!res.ok) return false
+    const data = await res.json()
+    return Boolean(data.active)
+  } catch {
+    return false // server still refuses duplicates with 409
+  }
+}

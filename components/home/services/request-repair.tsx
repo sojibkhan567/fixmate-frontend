@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { CheckCircle2, Loader2 } from "lucide-react"
@@ -17,9 +17,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { createBooking } from "@/lib/services/api"
-import { useAuth } from "@/hooks/use-auth"
 import { bookingSchema } from "@/lib/validations/booking-services"
+import { createBooking, hasActiveBooking } from "@/lib/services/api"
+import { useAuth } from "@/hooks/use-auth"
 import { Service } from "@/types/services"
 
 type Props = {
@@ -42,11 +42,30 @@ export function RequestRepair({ service }: Props) {
   const [pending, setPending] = useState(false)
   const [done, setDone] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [alreadyBooked, setAlreadyBooked] = useState(false)
+  const [checking, setChecking] = useState(false)
+
+  // Customers only: check for an existing active booking for this service
+  const isCustomer = user?.role === "customer"
+  useEffect(() => {
+    if (!isCustomer) return
+    let cancelled = false
+    setChecking(true)
+    hasActiveBooking(service.id).then((active) => {
+      if (!cancelled) {
+        setAlreadyBooked(active)
+        setChecking(false)
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [isCustomer, service.id])
 
   if (loading) {
     return (
       <Button className={ctaClass} disabled>
-        Booking Service
+        Booking Services
       </Button>
     )
   }
@@ -60,7 +79,7 @@ export function RequestRepair({ service }: Props) {
           router.push(`/sign-in?callbackUrl=${encodeURIComponent(pathname)}`)
         }
       >
-        Booking Service
+        Booking Services
       </Button>
     )
   }
@@ -70,10 +89,29 @@ export function RequestRepair({ service }: Props) {
     return (
       <div className="space-y-2">
         <Button className={ctaClass} disabled>
-          Booking Service
+          Booking Services
         </Button>
         <p className="text-sm text-muted-foreground">
           Only customers can request a repair.
+        </p>
+      </div>
+    )
+  }
+
+  if (alreadyBooked && !done) {
+    return (
+      <div className="space-y-2">
+        <Button className={ctaClass} disabled>
+          Booking Services
+        </Button>
+        <p className="text-sm text-muted-foreground">
+          You already have an active request for this service.{" "}
+          <Link
+            href="/my-bookings"
+            className="font-medium text-amber-700 underline underline-offset-2"
+          >
+            View My Bookings
+          </Link>
         </p>
       </div>
     )
@@ -121,10 +159,10 @@ export function RequestRepair({ service }: Props) {
       const res = await createBooking(input)
       const data = res.data
 
-      console.log(data)
-
       if (res.status === 409) {
         toast.error("You already have an active request for this service")
+        setOpen(false)
+        setAlreadyBooked(true)
         return
       }
       if (!res.ok) {
@@ -133,6 +171,7 @@ export function RequestRepair({ service }: Props) {
       }
 
       setDone(true)
+      setAlreadyBooked(true) // button disables once the success dialog is closed
       toast.success("Repair request sent", {
         action: {
           label: "My Bookings",
@@ -156,12 +195,16 @@ export function RequestRepair({ service }: Props) {
 
   return (
     <>
-      <Button className={ctaClass} onClick={() => setOpen(true)}>
-        Booking Service
+      <Button
+        className={ctaClass}
+        disabled={checking}
+        onClick={() => setOpen(true)}
+      >
+        Booking Services
       </Button>
 
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto p-6 sm:max-w-lg">
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           {done ? (
             <div className="flex flex-col items-center gap-3 py-6 text-center">
               <CheckCircle2 className="size-12 text-amber-500" />
@@ -180,7 +223,7 @@ export function RequestRepair({ service }: Props) {
           ) : (
             <form onSubmit={onSubmit} noValidate className="space-y-4">
               <DialogHeader>
-                <DialogTitle>Booking Service</DialogTitle>
+                <DialogTitle>Booking Services</DialogTitle>
                 <DialogDescription>{service.title}</DialogDescription>
               </DialogHeader>
 

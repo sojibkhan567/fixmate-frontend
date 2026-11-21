@@ -125,16 +125,18 @@ export function ServicesBrowser() {
           </div>
           {/** list ot card */}
           <div className="mt-6 mb-4 flex min-h-8 items-center justify-between gap-3">
-            <p
-              className="text-sm font-semibold text-stone-600"
-              aria-live="polite"
-            >
-              {loading
-                ? "Loading services…"
-                : error
-                  ? ""
-                  : `Showing Total ${services.length} ${services.length === 1 ? "Service." : "Services."}`}
-            </p>
+            {loading ? (
+              "Loading services…"
+            ) : error ? (
+              ""
+            ) : (
+              <h1 className="text-sm text-stone-600" aria-live="polite">
+                Showing Total{" "}
+                <span className="text-[15px] font-bold">{services.length}</span>{" "}
+                {services.length === 1 ? "Service." : "Services."}`
+              </h1>
+            )}
+
             {hasFilters && (
               <Button
                 variant="ghost"
