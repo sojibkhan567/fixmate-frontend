@@ -50,6 +50,7 @@ export function RequestRepair({ service }: Props) {
   useEffect(() => {
     if (!isCustomer) return
     let cancelled = false
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setChecking(true)
     hasActiveBooking(service.id).then((active) => {
       if (!cancelled) {
@@ -107,7 +108,7 @@ export function RequestRepair({ service }: Props) {
         <p className="text-sm text-muted-foreground">
           You already have an active request for this service.{" "}
           <Link
-            href="/my-bookings"
+            href="/dashboard/customer/bookings"
             className="font-medium text-amber-700 underline underline-offset-2"
           >
             View My Bookings
@@ -139,6 +140,7 @@ export function RequestRepair({ service }: Props) {
       problemDescription: String(fd.get("problemDescription") ?? ""),
       finalAmount: service.basePrice,
       status: "requested",
+      paymentStatus: "unpaid",
     }
 
     const parsed = bookingSchema.safeParse(input)
@@ -175,7 +177,7 @@ export function RequestRepair({ service }: Props) {
       toast.success("Repair request sent", {
         action: {
           label: "My Bookings",
-          onClick: () => router.push("/my-bookings"),
+          onClick: () => router.push("/dashboard/customer/bookings"),
         },
       })
     } catch {
@@ -214,7 +216,7 @@ export function RequestRepair({ service }: Props) {
               </DialogDescription>
               <Button
                 nativeButton={false}
-                render={<Link href="/my-bookings" />}
+                render={<Link href="/dashboard/customer/bookings" />}
                 className="mt-2 bg-amber-500 text-amber-950 hover:bg-amber-400"
               >
                 Go to My Bookings

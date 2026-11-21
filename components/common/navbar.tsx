@@ -31,10 +31,10 @@ export default function Navbar() {
           <nav className="hidden flex-1 items-center justify-center gap-0.5 md:flex">
             <Link
               className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-all duration-150 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/60 dark:hover:text-white"
-              href={"/dashboard"}
+              href={"/services"}
             >
               <LayoutDashboard className="h-4 w-4" />
-              Dashboard
+              Services
             </Link>
             <Link
               className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-all duration-150 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/60 dark:hover:text-white"

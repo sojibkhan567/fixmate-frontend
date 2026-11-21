@@ -55,10 +55,10 @@ export function ServicesTable({ services, statusFilter, hasFilters }: Props) {
     statusFilter === "all" ? sortPendingFirst(optimistic) : optimistic
 
   function decide(service: Service, status: Decision) {
-    setBusyId(service._id)
+    setBusyId(service.id)
     startTransition(async () => {
-      applyOptimistic({ id: service._id, status })
-      const result = await updateServiceStatus(service._id, status)
+      applyOptimistic({ id: service.id, status })
+      const result = await updateServiceStatus(service.id, status)
       setBusyId(null)
       if (result.ok) {
         toast.success(
@@ -125,7 +125,9 @@ export function ServicesTable({ services, statusFilter, hasFilters }: Props) {
                   />
                 </TableCell>
                 <TableCell>
-                  <div className="leading-tight font-medium">{s.title}</div>
+                  <div className="max-w-50 truncate leading-tight font-medium">
+                    {s.title}
+                  </div>
                   {s.category && (
                     <div className="text-xs text-muted-foreground">
                       {s.category}
