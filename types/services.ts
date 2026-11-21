@@ -15,6 +15,24 @@ export type ServiceCategory =
 
 export type ServiceMode = "Home Visit" | "Shop Drop-off"
 
+// export type Technician = {
+//   name: string
+//   image?: string
+//   area?: string
+//   bio?: string
+// }
+
+export interface Technician {
+  id: string
+  name: string
+  email: string
+  image?: string
+  bio?: string
+  area?: string
+  phone?: string
+  [key: string]: unknown
+}
+
 export interface Service {
   _id: string
   title: string
@@ -29,6 +47,7 @@ export interface Service {
   technicianEmail: string
   technicianName: string
   approvalStatus: ApprovalStatus
+  technician?: Technician
   updatedAt: string
   createdAt: string
 }

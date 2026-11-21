@@ -1,40 +1,28 @@
 import Link from "next/link"
 import { buttonVariants } from "@/components/ui/button"
 import { MyServicesTable } from "@/components/services/my-services-table"
-
-import { API_BASE_URL } from "@/lib/api/config"
 import { getTokenFromServer } from "@/lib/getTokenFromServer"
-import { toast } from "react-toastify"
 
-// app/dashboard/technician/my-services/page.tsx
 export default async function MyServicesPage() {
-  let services = []
-
-  try {
-    const token = await getTokenFromServer()
-
-    const res = await fetch(`${API_BASE_URL}/services/technician`, {
-      method: "GET",
+  const token = await getTokenFromServer()
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/technician/my-services`,
+    {
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
       cache: "no-store",
-    })
-
-    const data = await res.json().catch(() => ({}))
-
-    if (!res.ok) {
-      throw new Error(data.message || "Failed to fetch services")
     }
-
-    services = data.data || []
-  } catch (error) {
-    toast.error("Failed to fetch services.")
-    console.log(error)
-    services = []
+  )
+  if (!res.ok) {
+    console.log("API: ", res)
   }
 
+  const data = await res.json()
+  const services = Array.isArray(data)
+    ? data
+    : (data.data ?? data.services ?? [])
   return (
     <main className="container space-y-6 px-10 py-10">
       <div className="flex items-center justify-between gap-4">
