@@ -1,4 +1,5 @@
 import type { Service, ServiceFilters } from "@/types/services"
+import { getTokenFromClient } from "../getTokenFromClient"
 
 export const API_URL = process.env.API_URL ?? "http://localhost:5000"
 export const SERVICES_PATH = "/admin/services"
@@ -47,10 +48,13 @@ export type BookingPayload = {
  * save status: "requested", paymentStatus: "unpaid" + service/technician copy.
  */
 export async function createBooking(payload: BookingPayload) {
+  const token = await getTokenFromClient()
   const res = await fetch(`${API_URL}/bookings`, {
     method: "POST",
-    credentials: "include", // remove if you send a Bearer token instead
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(payload),
   })
   const data = await res.json().catch(() => ({}))

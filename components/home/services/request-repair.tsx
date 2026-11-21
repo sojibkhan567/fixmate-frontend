@@ -20,9 +20,10 @@ import {
 import { createBooking } from "@/lib/services/api"
 import { useAuth } from "@/hooks/use-auth"
 import { bookingSchema } from "@/lib/validations/booking-services"
+import { Service } from "@/types/services"
 
 type Props = {
-  service: { id: string; title: string }
+  service: Service
 }
 
 const todayLocal = () => {
@@ -83,10 +84,23 @@ export function RequestRepair({ service }: Props) {
     const fd = new FormData(e.currentTarget)
     const input = {
       serviceId: service.id,
+      service: {
+        title: service.title,
+        image: service.image,
+        category: service.category,
+      },
+      basePrice: service.basePrice,
+      technician: {
+        name: service.technicianName,
+        email: service.technicianEmail,
+      },
+      customer: { name: user?.name, email: user?.email },
       phone: String(fd.get("phone") ?? ""),
       address: String(fd.get("address") ?? ""),
       preferredDate: String(fd.get("preferredDate") ?? ""),
       problemDescription: String(fd.get("problemDescription") ?? ""),
+      finalAmount: service.basePrice,
+      status: "requested",
     }
 
     const parsed = bookingSchema.safeParse(input)
@@ -106,6 +120,8 @@ export function RequestRepair({ service }: Props) {
     try {
       const res = await createBooking(input)
       const data = res.data
+
+      console.log(data)
 
       if (res.status === 409) {
         toast.error("You already have an active request for this service")

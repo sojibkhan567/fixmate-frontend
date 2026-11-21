@@ -34,13 +34,13 @@ export interface Technician {
 }
 
 export interface Service {
-  _id: string
+  id: string
   title: string
   category: ServiceCategory
   description: string
   basePrice: number
   estimatedDuration: string
-  image: string
+  image?: string
   isAvailable: boolean
   serviceArea: string
   serviceMode: ServiceMode

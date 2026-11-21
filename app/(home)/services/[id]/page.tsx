@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props) {
 export default async function ServiceDetailsPage({ params }: Props) {
   const { id } = await params
   const service = await getService(id)
-  console.log(service)
+
   if (!service) notFound()
 
   const technician = service.technicianName
@@ -71,7 +71,7 @@ export default async function ServiceDetailsPage({ params }: Props) {
             ))}
           </dl>
 
-          <RequestRepair service={{ id: service._id, title: service.title }} />
+          <RequestRepair service={service} />
         </div>
       </div>
 
