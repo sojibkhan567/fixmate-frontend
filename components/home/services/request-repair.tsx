@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { bookingSchema } from "@/lib/validations/booking-services"
-import { createBooking, hasActiveBooking } from "@/lib/services/api"
+import { createBooking, getBookingStatus } from "@/lib/services/api"
 import { useAuth } from "@/hooks/use-auth"
 import { Service } from "@/types/services"
 
@@ -42,28 +42,29 @@ export function RequestRepair({ service }: Props) {
   const [pending, setPending] = useState(false)
   const [done, setDone] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [alreadyBooked, setAlreadyBooked] = useState(false)
-  const [checking, setChecking] = useState(false)
+  // Booking state read from the bookings collection (see GET /bookings/status)
+  //   booked: ANY customer has an active booking for this service
+  //   mine:   that booking is the signed-in customer's
+  const [status, setStatus] = useState<{
+    booked: boolean
+    mine: boolean
+  } | null>(null)
 
-  // Customers only: check for an existing active booking for this service
-  const isCustomer = user?.role === "customer"
   useEffect(() => {
-    if (!isCustomer) return
+    if (loading) return
     let cancelled = false
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setChecking(true)
-    hasActiveBooking(service.id).then((active) => {
-      if (!cancelled) {
-        setAlreadyBooked(active)
-        setChecking(false)
-      }
+    getBookingStatus(service.id).then((s) => {
+      if (!cancelled) setStatus(s)
     })
     return () => {
       cancelled = true
     }
-  }, [isCustomer, service.id])
+  }, [loading, user?.id, service.id])
 
-  if (loading) {
+  const taken = status?.booked ?? false
+  const mine = status?.mine ?? false
+
+  if (loading || status === null) {
     return (
       <Button className={ctaClass} disabled>
         Booking Services
@@ -99,22 +100,35 @@ export function RequestRepair({ service }: Props) {
     )
   }
 
-  console.log(alreadyBooked)
-  if (alreadyBooked && !done) {
+  // Customer, but the service already has an active booking → disabled
+  if (taken && !done) {
     return (
       <div className="space-y-2">
         <Button className={ctaClass} disabled>
           Booking Services
         </Button>
-        <p className="text-sm text-muted-foreground">
-          You already have an active request for this service.{" "}
-          <Link
-            href="/dashboard/customer/bookings"
-            className="font-medium text-amber-700 underline underline-offset-2"
-          >
-            View My Bookings
-          </Link>
-        </p>
+        {mine && (
+          <p className="text-sm text-muted-foreground">
+            You already have an active request for this service.{" "}
+            <Link
+              href="/dashboard/customer/bookings"
+              className="font-medium text-amber-700 underline underline-offset-2"
+            >
+              View My Bookings
+            </Link>
+          </p>
+        )}
+        {!mine && (
+          <p className="text-sm text-muted-foreground">
+            This service is currently booked by another customer.{" "}
+            <Link
+              href="/services"
+              className="font-medium text-amber-700 underline underline-offset-2"
+            >
+              Browse other services
+            </Link>
+          </p>
+        )}
       </div>
     )
   }
@@ -164,9 +178,9 @@ export function RequestRepair({ service }: Props) {
       const data = res.data
 
       if (res.status === 409) {
-        toast.error("You already have an active request for this service")
+        toast.error(data.error ?? "This service is already booked")
         setOpen(false)
-        setAlreadyBooked(true)
+        setStatus({ booked: true, mine: data.code === "own" })
         return
       }
       if (!res.ok) {
@@ -175,7 +189,7 @@ export function RequestRepair({ service }: Props) {
       }
 
       setDone(true)
-      setAlreadyBooked(true) // button disables once the success dialog is closed
+      setStatus({ booked: true, mine: true }) // button disables once the success dialog is closed
       toast.success("Repair request sent", {
         action: {
           label: "My Bookings",
@@ -199,11 +213,7 @@ export function RequestRepair({ service }: Props) {
 
   return (
     <>
-      <Button
-        className={ctaClass}
-        disabled={checking}
-        onClick={() => setOpen(true)}
-      >
+      <Button className={ctaClass} onClick={() => setOpen(true)}>
         Booking Services
       </Button>
 
