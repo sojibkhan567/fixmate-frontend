@@ -7,23 +7,31 @@ import { StatsBand } from "@/components/home/stats-band"
 import { TechnicianCta } from "@/components/home/technician-cta"
 import { Testimonials } from "@/components/home/testimonials"
 import { DEMO_SERVICES } from "@/lib/demo-data"
+import { getFeaturedServices } from "@/lib/services/api"
 
-export default function Page() {
-  //const live = await getFeaturedServices()
+export const metadata = {
+  title: "FixMate | Get it fixed by verified technicians",
+  description:
+    "Find approved repair services, send a request in a minute, and pay only after the job is done.",
+}
+
+export default async function HomePage() {
+  const live = await getFeaturedServices()
   // Demo data keeps the UI populated until the API returns real services.
-  const services = DEMO_SERVICES
+  const services = live.length ? live : DEMO_SERVICES
+
   return (
     <>
-      {/* <HeroSlider /> */}
-
-      <Hero />
-      <StatsBand />
-      <FeaturedServices services={services} />
-      <HowItWorks />
-      <CategoriesShowcase />
-      <Testimonials />
-      <TechnicianCta />
-      <Faq />
+      <main>
+        <Hero />
+        <StatsBand />
+        <FeaturedServices services={services} />
+        <HowItWorks />
+        <CategoriesShowcase />
+        <Testimonials />
+        <TechnicianCta />
+        <Faq />
+      </main>
     </>
   )
 }

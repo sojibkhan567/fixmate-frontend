@@ -34,7 +34,7 @@ export interface Technician {
 }
 
 export interface Service {
-  _id?: string
+  _id: string
   id: string
   title: string
   category: ServiceCategory
@@ -99,9 +99,6 @@ export function sortPendingFirst(list: Service[]): Service[] {
         new Date(a.createdAt ?? 0).getTime()
   )
 }
-
-export const formatPrice = (p?: number) =>
-  typeof p === "number" ? `BDT ${p.toLocaleString()}` : "—"
 
 export const formatDate = (d?: string) =>
   d ? new Date(d).toLocaleDateString(undefined, { dateStyle: "medium" }) : "—"

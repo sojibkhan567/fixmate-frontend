@@ -50,10 +50,10 @@ export function getNav(role: Role): NavItem[] {
     case "technician":
       return [
         overview,
-        { label: "My Services", href: `${base}/services`, icon: Wrench },
+        { label: "My Services", href: `${base}/my-services`, icon: Wrench },
         {
           label: "Add Service",
-          href: `${base}/services/new`,
+          href: `${base}/add-services`,
           icon: PlusCircle,
         },
         {

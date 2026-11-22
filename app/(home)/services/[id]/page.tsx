@@ -86,7 +86,7 @@ export default async function ServiceDetailsPage({ params }: Props) {
 
         {technician && (
           <aside className="lg:col-span-2">
-            <h2 className="mb-3 text-xl font-semibold">Your technician</h2>
+            <h2 className="mb-3 text-xl font-semibold">Your Technician</h2>
             <div className="flex gap-4 rounded-xl border border-amber-200 bg-amber-50/50 p-4">
               <Avatar className="size-14">
                 <AvatarFallback className="bg-amber-200 text-amber-900">
@@ -94,7 +94,10 @@ export default async function ServiceDetailsPage({ params }: Props) {
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0">
-                <p className="font-medium">{technician}</p>
+                <p className="mb-2 font-medium">{service.technicianName}</p>
+                <p className="text-xs text-gray-400">
+                  {service.technicianEmail}
+                </p>
               </div>
             </div>
           </aside>

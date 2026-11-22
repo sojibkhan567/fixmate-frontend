@@ -13,7 +13,7 @@ export function FeaturedServices({ services }: { services: Service[] }) {
     >
       <SectionHeading
         eyebrow="Latest services"
-        title="Freshly added repair services"
+        title="Freshly Added Repair Services"
         subtitle="Approved by our team and ready to book right now."
       />
 

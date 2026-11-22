@@ -3,7 +3,8 @@ import { UserRound } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { categoryIcon } from "@/lib/demo-data"
-import type { Service } from "@/types/services"
+import { Service } from "@/types/services"
+import { formatMoney } from "@/lib/utils"
 
 export function ServiceCard({ service }: { service: Service }) {
   const Icon = categoryIcon(service.category)
@@ -37,7 +38,7 @@ export function ServiceCard({ service }: { service: Service }) {
           <span className="flex min-w-0 items-center gap-1.5">
             <UserRound className="size-4 shrink-0 text-amber-600" />
             <span className="truncate">
-              {service.technician?.name ?? "FixMate technician"}
+              {service.technicianName ?? "FixMate technician"}
             </span>
           </span>
           <Badge
@@ -52,7 +53,7 @@ export function ServiceCard({ service }: { service: Service }) {
           <div className="leading-tight">
             <p className="text-xs text-muted-foreground">Starting price</p>
             <p className="text-xl font-semibold text-amber-700">
-              ৳{Number(service.basePrice).toLocaleString()}
+              {formatMoney(service.basePrice)}
             </p>
           </div>
           <Button

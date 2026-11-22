@@ -1,5 +1,6 @@
 import type { Service, ServiceFilters } from "@/types/services"
 import { getTokenFromClient } from "../getTokenFromClient"
+import { Booking } from "@/types/bookings"
 
 export const API_URL = process.env.API_URL ?? "http://localhost:5000"
 export const SERVICES_PATH = "/admin/services"
@@ -103,4 +104,78 @@ export async function getFeaturedServices(): Promise<Service[]> {
   } catch {
     return []
   }
+}
+
+/* ---------------- Technician: manage requests ---------------- */
+
+/** GET /bookings/technician → bookings assigned to the logged-in technician (newest first) */
+export async function getTechnicianRequests(): Promise<Booking[]> {
+  const token = await getTokenFromClient()
+  const res = await fetch(`${API_URL}/bookings/technician`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+  })
+  if (!res.ok) throw new Error("Failed to load requests")
+  return res.json()
+}
+
+/**
+ * PATCH /bookings/:id/status
+ *   requested → accepted | rejected · accepted → inprogress · inprogress → completed (+ finalAmount)
+ */
+export async function updateBookingStatus(
+  id: string,
+  status: "accepted" | "rejected" | "inprogress" | "completed",
+  finalAmount?: number
+) {
+  const token = await getTokenFromClient()
+  const res = await fetch(`${API_URL}/bookings/${id}/status`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ status, finalAmount }),
+  })
+  const data = await res.json().catch(() => ({}))
+  return { ok: res.ok, status: res.status, data }
+}
+
+/* ---------------- Admin: service approval ---------------- */
+
+export type ApprovalStatus = "pending" | "approved" | "rejected"
+
+/** GET /admin/services → all services from all technicians (newest first) */
+export async function getAdminServices(): Promise<Service[]> {
+  const token = await getTokenFromClient()
+  const res = await fetch(`${API_URL}/admin/services`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+  })
+  if (!res.ok) throw new Error("Failed to load services")
+  return res.json()
+}
+
+/** PATCH /admin/services/:id/approval  { approvalStatus: "approved" | "rejected" } */
+export async function setServiceApproval(
+  id: string,
+  approvalStatus: "approved" | "rejected"
+) {
+  const token = await getTokenFromClient()
+  const res = await fetch(`${API_URL}/admin/services/${id}/approval`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ approvalStatus }),
+  })
+  const data = await res.json().catch(() => ({}))
+  return { ok: res.ok, status: res.status, data }
 }
