@@ -22,6 +22,18 @@ export const auth = betterAuth({
         input: true,
         defaultValue: "customer",
       },
+      phone: {
+        type: "string", // Contact number
+        required: true,
+      },
+      area: {
+        type: "string", // City / area, e.g. "Mirpur, Dhaka"
+        required: true,
+      },
+      bio: {
+        type: "string", // Short bio: skills & experience (technicians)
+        required: true,
+      },
     },
   },
 

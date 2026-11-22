@@ -1,39 +1,55 @@
 "use client"
 
-import { useSession } from "@/lib/auth-client"
+import { useMemo } from "react"
+import { authClient } from "@/lib/auth-client"
+
+export type Role = "customer" | "technician" | "admin"
 
 export type AuthUser = {
+  id: string
   name: string
   email: string
-  role: "customer" | "technician" | "admin"
+  image?: string | null
+  role: Role
 }
 
+const ROLES: Role[] = ["customer", "technician", "admin"]
+const toRole = (r: unknown): Role =>
+  ROLES.includes(r as Role) ? (r as Role) : "customer"
+
+/**
+ * App-wide auth hook, backed by Better Auth's session.
+ *  - user:    null when signed out
+ *  - loading: true while the session is being fetched
+ *  - signOut: ends the session on the server and clears the cookie
+ */
 export function useAuth(): {
   user: AuthUser | null
   loading: boolean
+  signOut: () => Promise<void>
 } {
-  const { data: session, isPending } = useSession()
+  const { data, isPending } = authClient.useSession()
+  const raw = data?.user
 
-  if (isPending) {
-    return {
-      user: null,
-      loading: true,
-    }
-  }
-
-  if (!session?.user) {
-    return {
-      user: null,
-      loading: false,
-    }
-  }
+  const user = useMemo<AuthUser | null>(
+    () =>
+      raw
+        ? {
+            id: raw.id,
+            name: raw.name ?? "",
+            email: raw.email,
+            image: raw.image ?? null,
+            role: toRole((raw as { role?: unknown }).role),
+          }
+        : null,
+    [raw]
+  )
 
   return {
-    user: {
-      name: session.user.name,
-      email: session.user.email,
-      role: (session.user.role ?? "customer") as AuthUser["role"],
+    user,
+    loading: isPending,
+    signOut: async () => {
+      await authClient.signOut()
     },
-    loading: false,
   }
 }

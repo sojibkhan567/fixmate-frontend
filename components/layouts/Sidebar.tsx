@@ -1,148 +1,105 @@
-import {
-  CalendarDays,
-  ChartColumn,
-  Clock,
-  DollarSign,
-  LayoutDashboardIcon,
-  LogOut,
-  Megaphone,
-  Settings,
-  TrendingUp,
-  Users,
-  X,
-} from "lucide-react"
-import Link from "next/link"
-import React from "react"
-import Logo from "../common/logo"
+"use client"
 
-const Sidebar = ({
-  open,
-  setOpen,
-}: {
-  open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}) => {
-  return (
-    <aside
-      className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r bg-card transition-transform duration-200 md:static md:z-auto md:w-60 md:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"} `}
-    >
-      <div className="flex h-16 items-center justify-between border-b px-4">
-        <Link className="flex items-center gap-2.5" href="/dashboard">
-          <Logo />
-        </Link>
-        <button
-          onClick={() => setOpen(false)}
-          className="rounded-md p-1.5 hover:bg-muted md:hidden"
-          aria-label="Close menu"
-        >
-          <X className="h-5 w-5" />
-        </button>
-      </div>
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-        <Link
-          className="flex items-center gap-3 rounded-lg bg-green-600 px-3 py-2.5 text-sm font-medium text-white shadow-sm transition-colors"
-          aria-current="page"
-          href="/dashboard"
-        >
-          <LayoutDashboardIcon className="h-4.5 w-4.5 shrink-0" />
-          Dashboard
-        </Link>
-        <Link
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          href="/dashboard/employees"
-        >
-          <Users className="h-4.5 w-4.5 shrink-0" />
-          Employees
-        </Link>
-        <Link
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          href="/dashboard/attendance"
-        >
-          <Clock className="h-4.5 w-4.5 shrink-0" />
-          Attendance
-        </Link>
-        <Link
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          href="/dashboard/leave"
-        >
-          <CalendarDays className="h-4.5 w-4.5 shrink-0" />
-          Leave
-        </Link>
-        <Link
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          href="/dashboard/payroll"
-        >
-          <DollarSign className="h-4.5 w-4.5 shrink-0" />
-          Payroll
-        </Link>
-        <Link
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          href="/dashboard/finance"
-        >
-          <TrendingUp className="h-4.5 w-4.5 shrink-0" />
-          Finance
-        </Link>
-        <Link
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          href="/dashboard/reports"
-        >
-          <ChartColumn className="h-4.5 w-4.5 shrink-0" />
-          Reports
-        </Link>
-        <Link
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          href="/dashboard/notices"
-        >
-          <Megaphone className="h-4.5 w-4.5 shrink-0" />
-          Notices
-        </Link>
-        <Link
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          href="/dashboard/activity"
-        >
-          <Clock className="h-4.5 w-4.5 shrink-0" />
-          Activity Log
-        </Link>
-      </nav>
-      {/** settings section */}
-      <div className="space-y-1 border-t p-3">
-        <Link
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          href="dashboard/settings"
-        >
-          <Settings className="h-4.5 w-4.5 shrink-0" />
-          Settings
-        </Link>
-        <div className="flex items-center gap-3 rounded-lg px-3 py-2">
-          <span
-            data-slot="avatar"
-            data-size="default"
-            className="group/avatar relative flex size-8 h-8 w-8 shrink-0 overflow-hidden rounded-full select-none data-[size=lg]:size-10 data-[size=sm]:size-6"
-          >
-            <span
-              data-slot="avatar-fallback"
-              className="flex size-full items-center justify-center rounded-full bg-green-100 text-xs font-semibold text-green-700 group-data-[size=sm]/avatar:text-xs"
-            >
-              BU
-            </span>
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">Business Owner</p>
-            <p className="truncate text-[11px] text-muted-foreground">
-              ORG ADMIN
-            </p>
-          </div>
-          <button
-            className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-red-600"
-            aria-label="Logout"
-            title="Logout"
-          >
-            <LogOut className="h-4.5 w-4.5 shrink-0" />
-          </button>
-        </div>
-      </div>
-    </aside>
-  )
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { Home, LogOut, X } from "lucide-react"
+import type { Role } from "@/types"
+import { getNav, isActive, ROLE_LABEL } from "@/lib/dashboard-nav"
+import { Logo } from "../home/nav-bar"
+
+type Props = {
+  role: Role
+  open: boolean // mobile drawer state
+  onClose: () => void
+  onSignOut: () => void
 }
 
-export default Sidebar
+export function Sidebar({ role, open, onClose, onSignOut }: Props) {
+  const pathname = usePathname()
+  const items = getNav(role)
+
+  return (
+    <>
+      {/* mobile overlay */}
+      <div
+        aria-hidden
+        onClick={onClose}
+        className={`fixed inset-0 z-40 bg-stone-950/50 transition-opacity lg:hidden ${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
+
+      <aside
+        aria-label="Dashboard sidebar"
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-amber-200 bg-background transition-transform duration-200 lg:translate-x-0 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-amber-100 px-5">
+          <Logo />
+          <button
+            type="button"
+            aria-label="Close sidebar"
+            onClick={onClose}
+            className="rounded-md p-1.5 hover:bg-amber-50 lg:hidden"
+          >
+            <X className="size-5" />
+          </button>
+        </div>
+
+        <div className="px-5 pt-5 pb-2">
+          <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold tracking-wider text-amber-900 uppercase">
+            {ROLE_LABEL[role]} panel
+          </span>
+        </div>
+
+        <nav
+          className="flex-1 space-y-1 overflow-y-auto px-3 py-2"
+          aria-label="Dashboard"
+        >
+          {items.map((item) => {
+            const active = isActive(pathname, item)
+            const Icon = item.icon
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onClose}
+                aria-current={active ? "page" : undefined}
+                className={`group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  active
+                    ? "bg-amber-100 text-amber-950"
+                    : "text-muted-foreground hover:bg-amber-50 hover:text-amber-900"
+                }`}
+              >
+                {active && (
+                  <span className="absolute inset-y-1.5 left-0 w-1 rounded-r-full bg-amber-500" />
+                )}
+                <Icon
+                  className={`size-4.5 ${active ? "text-amber-700" : "text-amber-600/70 group-hover:text-amber-700"}`}
+                />
+                {item.label}
+              </Link>
+            )
+          })}
+        </nav>
+
+        <div className="space-y-1 border-t border-amber-100 p-3">
+          <Link
+            href="/"
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-amber-50 hover:text-amber-900"
+          >
+            <Home className="size-4.5 text-amber-600/70" /> Back to home
+          </Link>
+          <button
+            type="button"
+            onClick={onSignOut}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-red-50 hover:text-red-700"
+          >
+            <LogOut className="size-4.5" /> Sign out
+          </button>
+        </div>
+      </aside>
+    </>
+  )
+}

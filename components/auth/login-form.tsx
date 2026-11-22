@@ -1,118 +1,157 @@
 "use client"
-import { Input } from "@/components/ui/input"
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
-import { Button } from "@/components/ui/button"
+
+import Link from "next/link"
 import { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { toast } from "sonner"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { authClient } from "@/lib/auth-client"
-import { toast } from "react-toastify"
-const LoginForm = () => {
-  const [loading, setLoading] = useState(false)
+import { loginSchema, type LoginValues } from "@/lib/validations/login-schema"
 
-  const DASHBOARD_BY_ROLE: Record<string, string> = {
-    customer: "/dashboard/customer",
-    technician: "/dashboard/technician",
-    admin: "/dashboard/admin",
-  }
+const ROLES = ["customer", "technician", "admin"]
 
-  /** Only allow internal paths like "/services/123". Blocks "https://evil.com" and "//evil.com" */
-  function getSafeCallbackUrl(url: string | null): string | null {
-    if (!url) return null
-    if (!url.startsWith("/") || url.startsWith("//") || url.startsWith("/\\"))
-      return null
-    return url
-  }
+/** Only same-site relative paths (blocks open redirects like //evil.com) */
+const isSafePath = (url: string | null): url is string =>
+  !!url && url.startsWith("/") && !url.startsWith("//")
 
-  // inside your component
+/**
+ * Where to go after login:
+ *  - the page the user came from (e.g. a service they wanted to request), unless it is
+ *    a dashboard area that belongs to a different role
+ *  - otherwise their own role dashboard: /dashboard/customer | technician | admin
+ */
+function getRedirect(callbackUrl: string | null, role: unknown) {
+  const home = ROLES.includes(role as string)
+    ? `/dashboard/${role}`
+    : "/dashboard"
+  if (!isSafePath(callbackUrl)) return home
+  if (callbackUrl.startsWith("/dashboard") && !callbackUrl.startsWith(home))
+    return home
+  return callbackUrl
+}
+
+export function LoginForm() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"))
+  const params = useSearchParams()
+  const [showPassword, setShowPassword] = useState(false)
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const user = Object.fromEntries(new FormData(e.currentTarget)) as Record<
-      string,
-      string
-    >
-    setLoading(true)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    mode: "onTouched",
+    defaultValues: { email: "", password: "", rememberMe: true },
+  })
 
-    try {
-      const { data, error: authError } = await authClient.signIn.email({
-        email: user.email,
-        password: user.password,
-      })
+  async function onSubmit(values: LoginValues) {
+    const { data, error } = await authClient.signIn.email({
+      email: values.email,
+      password: values.password,
+      rememberMe: values.rememberMe,
+    })
 
-      if (authError) {
-        toast.error(authError.message || "Sign in failed.", {
-          style: {
-            borderRadius: "5px",
-            background: "#FDEBE8",
-            color: "red",
-          },
-        })
-        return
-      }
-
-      if (!data) {
-        router.replace("/sign-in")
-        return
-      }
-
-      const role = data.user.role as string | undefined
-      const dashboard =
-        (role && DASHBOARD_BY_ROLE[role]) || "/dashboard/customer"
-
-      router.replace(callbackUrl ?? dashboard)
-      router.refresh()
-    } catch {
-      toast.error("Something went wrong. Please try again.")
-    } finally {
-      setLoading(false)
+    if (error) {
+      toast.error(error.message ?? "Invalid email or password")
+      return
     }
+
+    toast.success("Welcome back!")
+    const role = (data?.user as { role?: string } | undefined)?.role
+    router.push(getRedirect(params.get("callbackUrl"), role))
+    router.refresh()
   }
+
   return (
-    <form onSubmit={onSubmit}>
-      <FieldGroup>
-        <Field>
-          <FieldLabel htmlFor="fieldgroup-email">Email</FieldLabel>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      className="w-full max-w-md space-y-5 rounded-2xl border border-amber-200 bg-card p-6 shadow-sm sm:p-8"
+    >
+      <div className="space-y-1">
+        <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+        <p className="text-sm text-muted-foreground">
+          Sign in to manage your repair requests.
+        </p>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          autoComplete="email"
+          placeholder="you@example.com"
+          aria-invalid={!!errors.email}
+          {...register("email")}
+        />
+        {errors.email && (
+          <p className="text-sm text-destructive">{errors.email.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="password">Password</Label>
+        <div className="relative">
           <Input
-            id="fieldgroup-email"
-            type="email"
-            name="email"
-            placeholder="Enter your email"
+            id="password"
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            className="pr-10"
+            aria-invalid={!!errors.password}
+            {...register("password")}
           />
-          <FieldDescription>
-            We&apos;ll send updates to this address.
-          </FieldDescription>
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="fieldgroup-password">Password</FieldLabel>
-          <Input
-            id="fieldgroup-password"
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-          />
-          <FieldDescription>
-            We&apos;ll send updates to this address.
-          </FieldDescription>
-        </Field>
-        <Field orientation="horizontal">
-          <Button
-            type="submit"
-            className="w-full bg-green-600 hover:bg-green-700"
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            className="absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
           >
-            Submit
-          </Button>
-        </Field>
-      </FieldGroup>
+            {showPassword ? (
+              <EyeOff className="size-4" />
+            ) : (
+              <Eye className="size-4" />
+            )}
+          </button>
+        </div>
+        {errors.password && (
+          <p className="text-sm text-destructive">{errors.password.message}</p>
+        )}
+      </div>
+
+      <label className="flex cursor-pointer items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          className="size-4 rounded border-amber-300 accent-amber-500"
+          {...register("rememberMe")}
+        />
+        Remember me
+      </label>
+
+      <Button
+        type="submit"
+        disabled={isSubmitting}
+        className="h-11 w-full bg-amber-500 text-amber-950 hover:bg-amber-400"
+      >
+        {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+        {isSubmitting ? "Signing in…" : "Sign in"}
+      </Button>
+
+      <p className="text-center text-sm text-muted-foreground">
+        New to FixMate?{" "}
+        <Link
+          href="/sign-up"
+          className="font-medium text-amber-700 underline underline-offset-2"
+        >
+          Create an account
+        </Link>
+      </p>
     </form>
   )
 }
-
-export default LoginForm

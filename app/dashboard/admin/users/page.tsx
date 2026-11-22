@@ -1,9 +1,15 @@
 import { UsersTable } from "@/components/admin/all-users-table"
 import { getAllUsers } from "@/lib/api/users"
 import { auth } from "@/lib/auth"
+import { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import React from "react"
+
+export const metadata: Metadata = {
+  title: "Users | FixMate",
+  description:
+    "Find trusted technicians and professional repair services near you.",
+}
 
 const AdminUsersPage = async () => {
   const session = await auth.api.getSession({ headers: await headers() })

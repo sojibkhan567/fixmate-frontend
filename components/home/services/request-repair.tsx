@@ -99,6 +99,7 @@ export function RequestRepair({ service }: Props) {
     )
   }
 
+  console.log(alreadyBooked)
   if (alreadyBooked && !done) {
     return (
       <div className="space-y-2">
@@ -118,6 +119,7 @@ export function RequestRepair({ service }: Props) {
     )
   }
 
+  // create booking submit form
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const fd = new FormData(e.currentTarget)

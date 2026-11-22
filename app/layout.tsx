@@ -4,6 +4,7 @@ import "./globals.css"
 import { cn } from "@/lib/utils"
 import { ToastContainer } from "react-toastify"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { Toaster } from "sonner"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body>
         <TooltipProvider>{children}</TooltipProvider>
         <ToastContainer />
+        <Toaster position="top-right" />
       </body>
     </html>
   )
