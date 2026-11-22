@@ -1,10 +1,8 @@
 import { CategoriesShowcase } from "@/components/home/categories-showcase"
 import { Faq } from "@/components/home/faq"
 import { FeaturedServices } from "@/components/home/featured-services"
-import { Footer } from "@/components/home/footer"
 import { Hero } from "@/components/home/hero"
 import { HowItWorks } from "@/components/home/how-it-works"
-import { Navbar } from "@/components/home/nav-bar"
 import { StatsBand } from "@/components/home/stats-band"
 import { TechnicianCta } from "@/components/home/technician-cta"
 import { Testimonials } from "@/components/home/testimonials"
@@ -17,7 +15,7 @@ export default function Page() {
   return (
     <>
       {/* <HeroSlider /> */}
-      <Navbar />
+
       <Hero />
       <StatsBand />
       <FeaturedServices services={services} />
@@ -26,7 +24,6 @@ export default function Page() {
       <Testimonials />
       <TechnicianCta />
       <Faq />
-      <Footer />
     </>
   )
 }

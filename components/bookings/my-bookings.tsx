@@ -22,9 +22,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { cancelBooking, getMyBookings, startCheckout } from "@/lib/bookings/api"
+import {
+  cancelBooking,
+  getMyBookings,
+  startCheckout,
+  verifyPayment,
+} from "@/lib/bookings/api"
 import { Booking, BookingStatus } from "@/types/bookings"
-import { toast } from "react-toastify"
+import { toast } from "sonner"
 import { formatMoney } from "@/lib/utils"
 
 const STATUS: Record<BookingStatus, { label: string; className: string }> = {
@@ -66,24 +71,37 @@ export function MyBookings() {
   }, [])
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     load()
   }, [load])
 
-  // Messages after returning from Stripe Checkout
+  // Returning from Stripe Checkout: confirm the payment, then refresh the list
   useEffect(() => {
-    const payment = new URLSearchParams(window.location.search).get("payment")
-    if (payment === "success") toast.success("Payment received. Thank you!")
-    if (payment === "cancelled")
-      toast.info("Payment cancelled. You can pay anytime.")
-    if (payment) window.history.replaceState(null, "", window.location.pathname)
-  }, [])
+    const q = new URLSearchParams(window.location.search)
+    const payment = q.get("payment")
+    if (!payment) return
+    const booking = q.get("booking")
+    const sessionId = q.get("session_id")
+    window.history.replaceState(null, "", window.location.pathname)
 
+    if (payment === "cancelled") {
+      toast.info("Payment cancelled. You can pay anytime.")
+      return
+    }
+    if (payment === "success" && booking && sessionId) {
+      verifyPayment(booking, sessionId).then((paid) => {
+        if (paid) toast.success("Payment received. Thank you!")
+        else toast.info("We're confirming your payment. Refresh in a moment.")
+        load()
+      })
+    }
+  }, [load])
+
+  // cancel booking
   async function confirmCancel() {
     if (!cancelTarget) return
     setCancelling(true)
     try {
-      const res = await cancelBooking(cancelTarget._id as string)
+      const res = await cancelBooking(cancelTarget._id)
       if (res.ok) {
         setBookings(
           (prev) =>
@@ -104,20 +122,21 @@ export function MyBookings() {
     }
   }
 
-  //   async function pay(b: Booking) {
-  //     setPayingId(b._id)
-  //     try {
-  //       const res = await startCheckout(b._id)
-  //       if (res.ok && res.data.url) {
-  //         window.location.href = res.data.url
-  //         return // keep the spinner while redirecting
-  //       }
-  //       toast.error(res.data.error ?? "Couldn't start payment")
-  //     } catch {
-  //       toast.error("Network error. Try again.")
-  //     }
-  //     setPayingId(null)
-  //   }
+  // payment onClick method
+  async function pay(b: Booking) {
+    setPayingId(b._id)
+    try {
+      const res = await startCheckout(b._id)
+      if (res.ok && res.data.url) {
+        window.location.href = res.data.url
+        return // keep the spinner while redirecting
+      }
+      toast.error(res.data.error ?? "Couldn't start payment")
+    } catch {
+      toast.error("Network error. Try again.")
+    }
+    setPayingId(null)
+  }
 
   /* ---------- states ---------- */
   if (failed) {
@@ -174,7 +193,7 @@ export function MyBookings() {
         <Button
           size="sm"
           disabled={payingId === b._id}
-          onClick={() => console.log("click")}
+          onClick={() => pay(b)}
           className="bg-amber-500 text-amber-950 hover:bg-amber-400"
         >
           {payingId === b._id ? (

@@ -7,7 +7,7 @@ export type BookingStatus =
   | "accepted"
 
 export interface Booking {
-  _id?: string
+  _id: string
   serviceId: string
   service: {
     title: string

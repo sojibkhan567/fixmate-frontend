@@ -1,4 +1,5 @@
-import Navbar from "@/components/common/navbar"
+import { Footer } from "@/components/home/footer"
+import { Navbar } from "@/components/home/nav-bar"
 
 export default function LandingLayout({
   children,
@@ -9,6 +10,7 @@ export default function LandingLayout({
     <>
       <Navbar />
       {children}
+      <Footer />
     </>
   )
 }

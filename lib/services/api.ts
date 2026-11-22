@@ -89,3 +89,18 @@ export async function getBookingStatus(
     return { booked: false, mine: false } // server still refuses with 409
   }
 }
+
+/* ---------------- Home page ---------------- */
+
+/** GET /services/featured → 6 latest approved + available services (technician attached) */
+export async function getFeaturedServices(): Promise<Service[]> {
+  try {
+    const res = await fetch(`${API_URL}/services/featured`, {
+      cache: "no-store",
+    })
+    if (!res.ok) return []
+    return await res.json()
+  } catch {
+    return []
+  }
+}
