@@ -1,4 +1,3 @@
-import { Service } from "@/types/services"
 import {
   Laptop,
   Smartphone,
@@ -9,83 +8,6 @@ import {
   Zap,
   type LucideIcon,
 } from "lucide-react"
-
-/* ---------- Demo featured services (used only when the API returns nothing) ---------- */
-const base = {
-  approvalStatus: "approved",
-  isAvailable: true,
-  image: "", // empty → card shows an amber placeholder. Real data supplies image URLs.
-  serviceArea: "Kushtia",
-}
-
-export const DEMO_SERVICES: Service[] = [
-  {
-    ...base,
-    _id: "d1",
-    title: "Smartphone Screen Replacement",
-    category: "Smartphone",
-    serviceMode: "On-site",
-    startingPrice: 1500,
-    estimatedDuration: "1–2 hours",
-    description: "",
-    technician: { name: "Rafiq Ahmed" },
-  },
-  {
-    ...base,
-    _id: "d2",
-    title: "Laptop Overheating & Fan Repair",
-    category: "Laptop & PC",
-    serviceMode: "Pickup & Drop",
-    startingPrice: 1200,
-    estimatedDuration: "1 day",
-    description: "",
-    technician: { name: "Nusrat Jahan" },
-  },
-  {
-    ...base,
-    _id: "d3",
-    title: "AC Gas Refill & Servicing",
-    category: "AC",
-    serviceMode: "On-site",
-    startingPrice: 2200,
-    estimatedDuration: "2–3 hours",
-    description: "",
-    technician: { name: "Mizanur Rahman" },
-  },
-  {
-    ...base,
-    _id: "d4",
-    title: "Refrigerator Not Cooling Fix",
-    category: "Refrigerator",
-    serviceMode: "On-site",
-    startingPrice: 1800,
-    estimatedDuration: "2–4 hours",
-    description: "",
-    technician: { name: "Shamim Hossain" },
-  },
-  {
-    ...base,
-    _id: "d5",
-    title: "LED TV Panel & Backlight Repair",
-    category: "TV",
-    serviceMode: "Workshop",
-    startingPrice: 2500,
-    estimatedDuration: "2 days",
-    description: "",
-    technician: { name: "Tanvir Alam" },
-  },
-  {
-    ...base,
-    _id: "d6",
-    title: "Washing Machine Motor Repair",
-    category: "Washing Machine",
-    serviceMode: "On-site",
-    startingPrice: 1600,
-    estimatedDuration: "3 hours",
-    description: "",
-    technician: { name: "Abdul Karim" },
-  },
-] as Service[]
 
 /* ---------- Categories ---------- */
 export type Category = {

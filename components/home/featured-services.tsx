@@ -1,9 +1,9 @@
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import type { Service } from "@/types/services"
 import { SectionHeading } from "./section-heading"
 import { ServiceCard } from "./service-card"
+import { Service } from "@/types/services"
 
 export function FeaturedServices({ services }: { services: Service[] }) {
   return (

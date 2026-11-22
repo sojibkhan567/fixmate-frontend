@@ -16,9 +16,7 @@ export const metadata = {
 }
 
 export default async function HomePage() {
-  const live = await getFeaturedServices()
-  // Demo data keeps the UI populated until the API returns real services.
-  const services = live.length ? live : DEMO_SERVICES
+  const services = await getFeaturedServices()
 
   return (
     <>

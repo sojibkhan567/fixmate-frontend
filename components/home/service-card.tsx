@@ -2,9 +2,9 @@ import Link from "next/link"
 import { UserRound } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { categoryIcon } from "@/lib/demo-data"
-import { Service } from "@/types/services"
 import { formatMoney } from "@/lib/utils"
+import { Service } from "@/types/services"
+import { categoryIcon } from "@/lib/demo-data"
 
 export function ServiceCard({ service }: { service: Service }) {
   const Icon = categoryIcon(service.category)
