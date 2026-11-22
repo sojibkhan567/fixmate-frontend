@@ -2,7 +2,7 @@ import type { Service, ServiceFilters } from "@/types/services"
 import { getTokenFromClient } from "../getTokenFromClient"
 import { Booking } from "@/types/bookings"
 
-export const API_URL = process.env.API_URL ?? "http://localhost:5000"
+export const API_URL = process.env.NEXT_PUBLIC_API_URL
 export const SERVICES_PATH = "/admin/services"
 export const TECHNICIAN_PATH = "/technician/my-services"
 

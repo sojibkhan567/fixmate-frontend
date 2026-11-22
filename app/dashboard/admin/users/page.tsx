@@ -25,7 +25,6 @@ const AdminUsersPage = async () => {
 
   const users = await getAllUsers()
 
-  console.log(users, "users")
   const currentUserId = session.user.id
 
   return <UsersTable users={users} currentUserId={currentUserId} />
