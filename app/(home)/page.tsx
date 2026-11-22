@@ -6,7 +6,6 @@ import { HowItWorks } from "@/components/home/how-it-works"
 import { StatsBand } from "@/components/home/stats-band"
 import { TechnicianCta } from "@/components/home/technician-cta"
 import { Testimonials } from "@/components/home/testimonials"
-import { DEMO_SERVICES } from "@/lib/demo-data"
 import { getFeaturedServices } from "@/lib/services/api"
 
 export const metadata = {
