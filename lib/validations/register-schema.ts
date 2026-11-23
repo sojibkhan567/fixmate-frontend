@@ -24,12 +24,13 @@ export const registerSchema = z
     bio: z
       .string()
       .trim()
-      .max(30, "Bio must be 300 characters or fewer")
+      .max(300, "Bio must be 300 characters or fewer")
       .nullish(),
     password: z
       .string()
       .min(8, "Password must be at least 8 characters")
-      .regex(/[A-Za-z]/, "Include at least one letter")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
       .regex(/\d/, "Include at least one number"),
     confirmPassword: z.string(),
   })

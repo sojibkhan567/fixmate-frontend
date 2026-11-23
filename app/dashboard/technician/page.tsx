@@ -1,7 +1,12 @@
-import React from "react"
+// app/dashboard/technician/page.tsx
+import type { Metadata } from "next"
+import StatsOverview from "@/components/dashboard/stats-overview"
 
-const TechnicianDashboard = () => {
-  return <div>Technician dashbaord</div>
+export const metadata: Metadata = {
+  title: "Technician Dashboard",
+  description: "Overview of your services, approvals and pending requests.",
 }
 
-export default TechnicianDashboard
+export default function TechnicianDashboardPage() {
+  return <StatsOverview role="technician" />
+}
