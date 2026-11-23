@@ -10,19 +10,19 @@ FixMate is a repair-service marketplace. Customers browse approved repair servic
 
 ## Live URL
 
-|             |                                                                        |
-| ----------- | ---------------------------------------------------------------------- |
-| Website     | `https://your-frontend.example.com` _(replace with your deployed URL)_ |
-| Frontend    | `https://your-frontend.example.com` _(replace with your deployed URL)_ |
-| Backend API | `https://your-api.example.com` _(replace with your deployed URL)_      |
+|             |                                        |
+| ----------- | -------------------------------------- |
+| Website     | `https://fixmate-tawny.vercel.app`     |
+| Frontend    | `https://fixmate-tawny.vercel.app/`    |
+| Backend API | `fixmate-backend-zeta.vercel.app/test` |
 
 ## Demo credentials
 
-| Role       | Email                    | Password                   |
-| ---------- | ------------------------ | -------------------------- |
-| Admin      | `admin@example.com`      | `your-admin-password`      |
-| Technician | `technician@example.com` | `your-technician-password` |
-| Customer   | `customer@example.com`   | `your-customer-password`   |
+| Role       | Email                    | Password      |
+| ---------- | ------------------------ | ------------- |
+| Admin      | `admin@example.com`      | `password123` |
+| Technician | `technician@example.com` | `password123` |
+| Customer   | `customer@example.com`   | `password123` |
 
 > Replace these with your real demo accounts. Use throw-away demo passwords only, never real ones, and don't commit secrets to a public repository.
 

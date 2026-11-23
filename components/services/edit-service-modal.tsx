@@ -37,11 +37,11 @@ import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { uploadToImgBB } from "@/lib/api/services"
 import {
-  SERVICE_CATEGORIES,
   SERVICE_MODES,
   serviceFormSchema,
   type ServiceFormValues,
 } from "@/lib/validations/service"
+import { CATEGORY_ITEMS } from "@/lib/services"
 
 export type Service = ServiceFormValues & {
   _id: string
@@ -277,9 +277,9 @@ export default function EditServiceModal({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {SERVICE_CATEGORIES.map((c) => (
-                          <SelectItem key={c} value={c}>
-                            {c}
+                        {CATEGORY_ITEMS.map((c, i) => (
+                          <SelectItem key={i} value={c.value}>
+                            {c.label}
                           </SelectItem>
                         ))}
                       </SelectContent>

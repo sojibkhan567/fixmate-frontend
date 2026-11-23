@@ -31,17 +31,18 @@ import EditServiceModal from "./edit-service-modal"
 
 type ApprovalStatus = "pending" | "approved" | "rejected"
 
+type CategoryStatus =
+  | "AC"
+  | "Electrical"
+  | "Plumbing"
+  | "Appliance Repair"
+  | "Mobile & Laptop"
+  | "Cleaning"
+
 export type Service = {
   _id: string
   title: string
-  category:
-    | "Smartphone"
-    | "Laptop & PC"
-    | "AC"
-    | "Refrigerator"
-    | "TV"
-    | "Washing Machine"
-    | "Electrical"
+  category: CategoryStatus
   description: string
   image: string
   basePrice: number
