@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dialog"
 import { getTechnicianRequests, updateBookingStatus } from "@/lib/services/api"
 import { Booking, BookingStatus } from "@/types/bookings"
+import { formatMoney } from "@/lib/utils"
 
 const STATUS: Record<BookingStatus, { label: string; className: string }> = {
   requested: { label: "Requested", className: "bg-amber-100 text-amber-900" },
@@ -51,7 +52,6 @@ const FILTERS: { key: Filter; label: string }[] = [
   { key: "completed", label: "Completed" },
 ]
 
-const money = (n?: number | null) => `৳${Number(n ?? 0).toLocaleString()}`
 const fmtDate = (d: string) =>
   new Date(`${d}T00:00:00`).toLocaleDateString(undefined, {
     day: "numeric",
@@ -336,7 +336,7 @@ export function ManageRequests() {
                       <div className="min-w-0">
                         <p className="font-medium">{b.customer?.name}</p>
                         <p
-                          className="max-w-[11rem] truncate text-xs text-muted-foreground"
+                          className="max-w-44 truncate text-xs text-muted-foreground"
                           title={b.customer?.email}
                         >
                           {b.customer?.email}
@@ -347,22 +347,22 @@ export function ManageRequests() {
 
                   <TableCell>
                     <p
-                      className="max-w-[13rem] truncate font-medium"
+                      className="max-w-44 truncate font-medium"
                       title={b.service?.title}
                     >
                       {b.service?.title}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {b.status === "completed"
-                        ? `Final ${money(b.finalAmount)}`
-                        : `Base ${money(b.basePrice)}`}
+                        ? `Final ${formatMoney(b.finalAmount)}`
+                        : `Base ${formatMoney(b.basePrice)}`}
                     </p>
                   </TableCell>
 
                   <TableCell className="whitespace-nowrap">{b.phone}</TableCell>
 
                   <TableCell>
-                    <p className="max-w-[12rem] truncate" title={b.address}>
+                    <p className="max-w-44 truncate" title={b.address}>
                       {b.address}
                     </p>
                   </TableCell>
@@ -397,8 +397,8 @@ export function ManageRequests() {
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {b.status === "completed"
-                      ? `Final ${money(b.finalAmount)}`
-                      : `Base ${money(b.basePrice)}`}
+                      ? `Final ${formatMoney(b.finalAmount)}`
+                      : `Base ${formatMoney(b.basePrice)}`}
                   </p>
                 </div>
                 <StatusBadge b={b} />
@@ -492,7 +492,7 @@ export function ManageRequests() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-1.5">
-            <Label htmlFor="finalAmount">Final amount (৳)</Label>
+            <Label htmlFor="finalAmount">Final amount ($)</Label>
             <Input
               id="finalAmount"
               type="number"
@@ -509,7 +509,7 @@ export function ManageRequests() {
               <p className="text-sm text-destructive">{amountError}</p>
             ) : (
               <p className="text-xs text-muted-foreground">
-                Base price: {money(completeTarget?.basePrice)}
+                Base price: {formatMoney(completeTarget?.basePrice as number)}
               </p>
             )}
           </div>

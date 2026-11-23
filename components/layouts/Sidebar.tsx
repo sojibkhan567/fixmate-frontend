@@ -37,6 +37,9 @@ export function Sidebar({ role, open, onClose, onSignOut }: Props) {
       >
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-amber-100 px-5">
           <Logo />
+          <span className="hidden items-center rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-amber-900 uppercase lg:block">
+            {ROLE_LABEL[role]}
+          </span>
           <button
             type="button"
             aria-label="Close sidebar"
@@ -45,12 +48,6 @@ export function Sidebar({ role, open, onClose, onSignOut }: Props) {
           >
             <X className="size-5" />
           </button>
-        </div>
-
-        <div className="px-5 pt-5 pb-2">
-          <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold tracking-wider text-amber-900 uppercase">
-            {ROLE_LABEL[role]} panel
-          </span>
         </div>
 
         <nav

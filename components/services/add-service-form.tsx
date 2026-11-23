@@ -36,13 +36,13 @@ import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { createService, uploadToImgBB } from "@/lib/api/services"
 import {
-  SERVICE_CATEGORIES,
   SERVICE_MODES,
   serviceFormSchema,
   type ServiceFormValues,
 } from "@/lib/validations/service"
 import { toast } from "react-toastify"
 import { useRouter } from "next/navigation"
+import { CATEGORY_ITEMS } from "@/lib/services"
 
 interface Props {
   /** Logged-in technician. Copied into the service, not editable. */
@@ -157,9 +157,9 @@ export function AddServiceForm({ technician }: Props) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {SERVICE_CATEGORIES.map((c) => (
-                        <SelectItem key={c} value={c}>
-                          {c}
+                      {CATEGORY_ITEMS.map((c, i) => (
+                        <SelectItem key={i} value={c.value}>
+                          {c.label}
                         </SelectItem>
                       ))}
                     </SelectContent>

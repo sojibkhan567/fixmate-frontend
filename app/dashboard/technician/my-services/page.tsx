@@ -2,6 +2,12 @@ import Link from "next/link"
 import { buttonVariants } from "@/components/ui/button"
 import { MyServicesTable } from "@/components/services/my-services-table"
 import { getTokenFromServer } from "@/lib/getTokenFromServer"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "My Services | FixMate Application",
+  description: "The official services booking website.",
+}
 
 export default async function MyServicesPage() {
   const token = await getTokenFromServer()

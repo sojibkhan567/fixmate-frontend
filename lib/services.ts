@@ -15,7 +15,7 @@ export interface Service {
 
 export const CATEGORY_ITEMS = [
   { value: "all", label: "All categories" },
-  { value: "AC Repair", label: "AC Repair" },
+  { value: "AC", label: "AC Repair" },
   { value: "Electrical", label: "Electrical" },
   { value: "Plumbing", label: "Plumbing" },
   { value: "Appliance Repair", label: "Appliance Repair" },

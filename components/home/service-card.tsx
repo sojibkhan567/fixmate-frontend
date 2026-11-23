@@ -11,7 +11,7 @@ export function ServiceCard({ service }: { service: Service }) {
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-amber-200 bg-card transition-shadow hover:shadow-lg hover:shadow-amber-100">
-      <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-gradient-to-br from-amber-100 to-amber-200">
+      <div className="relative aspect-4/3 w-full shrink-0 overflow-hidden bg-linear-to-br from-amber-100 to-amber-200">
         {service.image ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -30,7 +30,7 @@ export function ServiceCard({ service }: { service: Service }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-4">
-        <h3 className="line-clamp-2 min-h-[3rem] text-lg leading-snug font-semibold">
+        <h3 className="line-clamp-2 min-h-12 text-lg leading-snug font-semibold">
           {service.title}
         </h3>
 

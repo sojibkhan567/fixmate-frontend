@@ -1,11 +1,16 @@
 import type { ServicePayload } from "@/lib/validations/service"
+import { getTokenFromClient } from "../getTokenFromClient"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000" // "" = Next.js route handler
 
 export async function createService(payload: ServicePayload) {
+  const token = await getTokenFromClient()
   const res = await fetch(`${BASE_URL}/services`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(payload),
   })
 

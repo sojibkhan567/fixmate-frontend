@@ -1,13 +1,12 @@
 import { z } from "zod"
 
 export const SERVICE_CATEGORIES = [
-  "Smartphone",
-  "Laptop & PC",
   "AC",
-  "Refrigerator",
-  "TV",
-  "Washing Machine",
   "Electrical",
+  "Plumbing",
+  "Appliance Repair",
+  "Mobile & Laptop",
+  "Cleaning",
 ] as const
 
 export const SERVICE_MODES = ["Home Visit", "Shop Drop-off"] as const

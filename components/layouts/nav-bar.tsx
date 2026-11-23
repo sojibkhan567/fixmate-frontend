@@ -1,7 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { usePathname } from "next/navigation"
 import { Menu, Wrench, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
@@ -33,8 +34,46 @@ export function Logo() {
 
 export function Navbar() {
   const { user, loading } = useAuth()
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const [section, setSection] = useState<string | null>(null) // home-page section in view
   const close = () => setOpen(false)
+
+  // Home page: highlight the "How it works / Categories / FAQ" link of the section in view
+  useEffect(() => {
+    if (pathname !== "/") {
+      setSection(null)
+      return
+    }
+    const ids = links
+      .filter((l) => l.href.startsWith("/#"))
+      .map((l) => l.href.slice(2))
+    const els = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => !!el)
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) if (e.isIntersecting) setSection(e.target.id)
+      },
+      { rootMargin: "-45% 0px -50% 0px" } // a thin band across the middle of the screen
+    )
+    els.forEach((el) => io.observe(el))
+
+    const onScroll = () => window.scrollY < 200 && setSection(null) // back at the top → Home
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => {
+      io.disconnect()
+      window.removeEventListener("scroll", onScroll)
+    }
+  }, [pathname])
+
+  const isActive = (href: string) => {
+    if (href.startsWith("/#"))
+      return pathname === "/" && section === href.slice(2)
+    if (href === "/") return pathname === "/" && !section
+    return pathname === href || pathname.startsWith(`${href}/`)
+  }
 
   const guestButtons = (
     <>
@@ -61,15 +100,29 @@ export function Navbar() {
         <Logo />
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
-          {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-amber-50 hover:text-amber-900"
-            >
-              {l.label}
-            </Link>
-          ))}
+          {links.map((l) => {
+            const active = isActive(l.href)
+            return (
+              <Link
+                key={l.href}
+                href={l.href}
+                aria-current={
+                  active
+                    ? l.href.startsWith("/#")
+                      ? "location"
+                      : "page"
+                    : undefined
+                }
+                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                  active
+                    ? "bg-amber-100 text-amber-950"
+                    : "text-muted-foreground hover:bg-amber-50 hover:text-amber-900"
+                }`}
+              >
+                {l.label}
+              </Link>
+            )
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -101,16 +154,28 @@ export function Navbar() {
       {open && (
         <div className="border-t border-amber-100 bg-background px-4 pt-2 pb-4 md:hidden">
           <nav className="flex flex-col" aria-label="Mobile">
-            {links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                onClick={close}
-                className="rounded-md px-3 py-2.5 text-sm font-medium hover:bg-amber-50"
-              >
-                {l.label}
-              </Link>
-            ))}
+            {links.map((l) => {
+              const active = isActive(l.href)
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  onClick={close}
+                  aria-current={
+                    active
+                      ? l.href.startsWith("/#")
+                        ? "location"
+                        : "page"
+                      : undefined
+                  }
+                  className={`rounded-md px-3 py-2.5 text-sm font-medium ${
+                    active ? "bg-amber-100 text-amber-950" : "hover:bg-amber-50"
+                  }`}
+                >
+                  {l.label}
+                </Link>
+              )
+            })}
           </nav>
           {!user && !loading && (
             <div className="mt-3 flex gap-2">{guestButtons}</div>

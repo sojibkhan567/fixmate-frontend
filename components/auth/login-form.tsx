@@ -26,9 +26,7 @@ const isSafePath = (url: string | null): url is string =>
  *  - otherwise their own role dashboard: /dashboard/customer | technician | admin
  */
 function getRedirect(callbackUrl: string | null, role: unknown) {
-  const home = ROLES.includes(role as string)
-    ? `/dashboard/${role}`
-    : "/dashboard"
+  const home = ROLES.includes(role as string) ? `/dashboard/${role}` : "/"
   if (!isSafePath(callbackUrl)) return home
   if (callbackUrl.startsWith("/dashboard") && !callbackUrl.startsWith(home))
     return home
