@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { toast } from "react-toastify"
+import { toast } from "sonner"
 import { getTokenFromClient } from "@/lib/getTokenFromClient"
 import EditServiceModal from "./edit-service-modal"
 

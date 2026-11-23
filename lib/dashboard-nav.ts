@@ -36,7 +36,7 @@ export function getNav(role: Role): NavItem[] {
   }
   const profile: NavItem = {
     label: "Profile",
-    href: `${base}/profile`,
+    href: "/dashboard/profile",
     icon: UserRound,
   }
 

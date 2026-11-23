@@ -112,7 +112,7 @@ export function UserMenu({
           <DropdownMenuItem render={<Link href={base} />}>
             <LayoutDashboard /> Dashboard
           </DropdownMenuItem>
-          <DropdownMenuItem render={<Link href={`${base}/profile`} />}>
+          <DropdownMenuItem render={<Link href={"/dashboard/profile"} />}>
             <UserRound /> Profile
           </DropdownMenuItem>
         </DropdownMenuGroup>

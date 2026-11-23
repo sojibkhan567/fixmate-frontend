@@ -30,7 +30,7 @@ export default async function MyServicesPage() {
     ? data
     : (data.data ?? data.services ?? [])
   return (
-    <main className="container space-y-6 px-10 py-10">
+    <div className="container space-y-6">
       <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">My services</h1>
@@ -48,6 +48,6 @@ export default async function MyServicesPage() {
 
       {/* Pass initial={[]} to preview the empty state */}
       <MyServicesTable services={services} />
-    </main>
+    </div>
   )
 }

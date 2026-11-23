@@ -108,6 +108,7 @@ export default function EditServiceModal({
   useEffect(() => {
     if (!service || !open) return
     form.reset(toFormValues(service))
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocalPreview("")
     if (fileInputRef.current) fileInputRef.current.value = ""
     // eslint-disable-next-line react-hooks/exhaustive-deps

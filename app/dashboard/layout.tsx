@@ -35,6 +35,17 @@ export default function DashboardLayout({
       router.replace("/")
       return
     }
+
+    // Shared routes accessible by every logged-in user
+    const sharedRoutes = ["/dashboard/profile"]
+
+    const isSharedRoute = sharedRoutes.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`)
+    )
+
+    if (isSharedRoute) return
+
+    // User's own role dashboard
     const own = `/dashboard/${user.role}`
     if (pathname !== own && !pathname.startsWith(`${own}/`)) router.replace(own)
   }, [loading, user, pathname, router])
