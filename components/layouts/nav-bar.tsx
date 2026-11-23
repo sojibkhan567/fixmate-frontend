@@ -42,6 +42,7 @@ export function Navbar() {
   // Home page: highlight the "How it works / Categories / FAQ" link of the section in view
   useEffect(() => {
     if (pathname !== "/") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSection(null)
       return
     }

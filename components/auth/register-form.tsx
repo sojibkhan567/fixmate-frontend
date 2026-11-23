@@ -59,7 +59,7 @@ export function RegisterForm() {
     }
 
     toast.success("Account created. Welcome to FixMate!")
-    router.push("/customer")
+    router.push("/")
     router.refresh()
   }
 

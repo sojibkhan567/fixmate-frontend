@@ -32,7 +32,7 @@ export function DashboardHeader({
         </h1>
       </div>
 
-      <UserMenu user={user} redirectTo="/sign-in" />
+      <UserMenu user={user} redirectTo="/" />
     </header>
   )
 }
