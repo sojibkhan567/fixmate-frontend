@@ -179,3 +179,35 @@ export async function setServiceApproval(
   const data = await res.json().catch(() => ({}))
   return { ok: res.ok, status: res.status, data }
 }
+
+/* ---------------- Customer: payment history ---------------- */
+
+export type Payment = {
+  _id: string
+  bookingId: string
+  serviceTitle: string
+  customerName: string
+  customerEmail: string
+  technicianName: string | null
+  technicianEmail: string | null
+  amount: number
+  currency: string
+  transactionId: string | null
+  stripeSessionId: string
+  paymentStatus: "paid"
+  paidAt: string
+}
+
+/** GET /payments/my → the logged-in customer's payments (newest first) */
+export async function getMyPayments(): Promise<Payment[]> {
+  const token = await getTokenFromClient()
+  const res = await fetch(`${API_URL}/payments/my`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+  })
+  if (!res.ok) throw new Error("Failed to load payments")
+  return res.json()
+}

@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   ListChecks,
   PlusCircle,
+  ReceiptIcon,
   ShieldCheck,
   UserRound,
   Users,
@@ -45,6 +46,7 @@ export function getNav(role: Role): NavItem[] {
       return [
         overview,
         { label: "My Bookings", href: `${base}/bookings`, icon: CalendarCheck },
+        { label: "Payments", href: `${base}/payments`, icon: ReceiptIcon },
         profile,
       ]
     case "technician":
