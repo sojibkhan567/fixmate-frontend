@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { getMyPayments, type Payment } from "@/lib/services/api"
+import { formatMoney } from "@/lib/utils"
 
 const money = (n?: number) => `৳${Number(n ?? 0).toLocaleString()}`
 const fmtDateTime = (d: string) =>
@@ -28,7 +29,7 @@ const fmtDateTime = (d: string) =>
   })
 
 /** Transaction id (monospace, truncated) with a copy button */
-function TransactionId({ id }: { id: string | null }) {
+export function TransactionId({ id }: { id: string | null }) {
   const [copied, setCopied] = useState(false)
   if (!id) return <span className="text-muted-foreground">—</span>
 
@@ -81,6 +82,7 @@ export function PaymentHistory() {
   }, [])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load()
   }, [load])
 
@@ -169,7 +171,7 @@ export function PaymentHistory() {
                   <TableCell>{p.technicianName ?? "—"}</TableCell>
                   <TableCell>
                     <span className="font-semibold text-amber-800">
-                      {money(p.amount)}
+                      {formatMoney(p.amount)}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -228,12 +230,12 @@ export function PaymentHistory() {
 
         {payments && payments.length > 0 && (
           <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-amber-100 px-3 py-1.5 text-right leading-tight">
+            <div className="rounded-lg bg-amber-100 px-3 py-1.5 text-center leading-tight">
               <p className="text-[11px] font-medium tracking-wider text-amber-900/80 uppercase">
                 Total paid
               </p>
               <p className="text-lg font-semibold text-amber-950">
-                {money(total)}
+                {formatMoney(total)}
               </p>
             </div>
             <Badge className="bg-amber-100 text-amber-900 hover:bg-amber-100">

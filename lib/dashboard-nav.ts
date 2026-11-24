@@ -75,6 +75,11 @@ export function getNav(role: Role): NavItem[] {
           icon: ShieldCheck,
         },
         { label: "All Bookings", href: `${base}/bookings`, icon: ListChecks },
+        {
+          label: "Transactions",
+          href: `${base}/transactions`,
+          icon: ReceiptIcon,
+        },
         profile,
       ]
   }

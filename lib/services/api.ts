@@ -1,10 +1,35 @@
 import type { Service, ServiceFilters } from "@/types/services"
 import { getTokenFromClient } from "../getTokenFromClient"
-import { Booking } from "@/types/bookings"
+import { Booking, BookingStatus } from "@/types/bookings"
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL
 export const SERVICES_PATH = "/admin/services"
 export const TECHNICIAN_PATH = "/technician/my-services"
+
+/*--------------- TYPES: all collection type declaration -------------- */
+export type BookingPayload = {
+  serviceId: string
+  phone: string
+  address: string
+  preferredDate: string // yyyy-mm-dd
+  problemDescription: string
+}
+
+export type Payment = {
+  _id: string
+  bookingId: string
+  serviceTitle: string
+  customerName: string
+  customerEmail: string
+  technicianName: string | null
+  technicianEmail: string | null
+  amount: number
+  currency: string
+  transactionId: string | null
+  stripeSessionId: string
+  paymentStatus: "paid"
+  paidAt: string
+}
 
 // GET /admin/services?approvalStatus=pending&search=ac&category=Cooling
 export async function getServices(filters: ServiceFilters): Promise<Service[]> {
@@ -35,13 +60,6 @@ export async function getService(id: string): Promise<Service | null> {
   }
 }
 
-export type BookingPayload = {
-  serviceId: string
-  phone: string
-  address: string
-  preferredDate: string // yyyy-mm-dd
-  problemDescription: string
-}
 /**
  * POST /bookings  (cookie/JWT auth)
  * Express should: check role === customer, refuse duplicates (409) when the
@@ -180,23 +198,49 @@ export async function setServiceApproval(
   return { ok: res.ok, status: res.status, data }
 }
 
-/* ---------------- Customer: payment history ---------------- */
+/* ---------------- Admin: all bookings & transactions ---------------- */
 
-export type Payment = {
-  _id: string
-  bookingId: string
-  serviceTitle: string
-  customerName: string
-  customerEmail: string
-  technicianName: string | null
-  technicianEmail: string | null
-  amount: number
-  currency: string
-  transactionId: string | null
-  stripeSessionId: string
-  paymentStatus: "paid"
-  paidAt: string
+export type BookingFilter = "all" | BookingStatus
+export type BookingCounts = Record<BookingFilter, number>
+
+/** GET /admin/bookings?status=...  (the server does the filtering) */
+export async function getAdminBookings(
+  status: BookingFilter
+): Promise<{ bookings: Booking[]; counts: BookingCounts }> {
+  const token = await getTokenFromClient()
+  const res = await fetch(
+    `${API_URL}/admin/bookings?status=${encodeURIComponent(status)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    }
+  )
+  if (!res.ok) throw new Error("Failed to load bookings")
+  return res.json()
 }
+
+/** GET /admin/transactions → every payment + total revenue (summed on the server) */
+export async function getAdminTransactions(): Promise<{
+  payments: Payment[]
+  totalRevenue: number
+  count: number
+}> {
+  const token = await getTokenFromClient()
+  const res = await fetch(`${API_URL}/admin/transactions`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+  })
+  if (!res.ok) throw new Error("Failed to load transactions")
+  return res.json()
+}
+
+/* ---------------- Customer: payment history ---------------- */
 
 /** GET /payments/my → the logged-in customer's payments (newest first) */
 export async function getMyPayments(): Promise<Payment[]> {
